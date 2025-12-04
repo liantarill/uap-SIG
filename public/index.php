@@ -303,7 +303,7 @@
 
             <!-- CTA Buttons -->
             <div class="flex flex-col sm:flex-row gap-4 justify-center mb-20 fade-up fade-up-delay-2">
-                <a href="main.php" class="btn-glow">
+                <a href="/src/map.php" class="btn-glow">
                     Mulai Sekarang
                 </a>
                 <button class="btn-ghost">
