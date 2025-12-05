@@ -6,7 +6,7 @@ define('DB_USER', 'root');
 define('DB_PASS', '');
 
 // Application Configuration
-define('APP_NAME', 'WebGIS Application');
+define('APP_NAME', 'UAP SIG');
 define('APP_VERSION', '1.0.0');
 
 // Map Configuration (sesuaikan dengan wilayah Anda)

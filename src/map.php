@@ -35,7 +35,7 @@
 <body class="bg-slate-900 text-gray-100">
     <!-- Header -->
     <div class="bg-gradient-to-r from-slate-800 to-slate-900 text-white px-6 py-5 shadow-xl border-b-2 border-cyan-400">
-        <a href="/public/index.php">
+        <a href="/index.php">
             <h1 class="text-2xl font-bold mb-1 text-white"><i class="fas fa-map-marked-alt mr-2"></i>UAP Sistem Informasi Geografis</h1>
         </a>
     </div>

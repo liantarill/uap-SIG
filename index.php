@@ -1,3 +1,14 @@
+<?php
+$anggota = [
+    ["name" => "Yusuf Herlian Ananta Ril", "npm" => "2317051083", "icon" => "✨"],
+    ["name" => "Nama Orang 2", "npm" => "2317051000", "icon" => "🔥"],
+    ["name" => "Nama Orang 3", "npm" => "2317051xxx", "icon" => "⭐"],
+    ["name" => "Nama Orang 3", "npm" => "2317051xxx", "icon" => "⭐"],
+    ["name" => "Nama Orang 3", "npm" => "2317051xxx", "icon" => "⭐"],
+    ["name" => "Nama Orang 3", "npm" => "2317051xxx", "icon" => "⭐"],
+];
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -8,17 +19,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <script src="https://cdn.tailwindcss.com"></script>
 
-
-    <!-- Google Fonts - Poppins -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
+    <link rel="stylesheet" href="assets/style.css">
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-        }
-
         body {
             background-color: #0f1113;
             background-image:
@@ -306,9 +308,9 @@
                 <a href="/src/map.php" class="btn-glow">
                     Mulai Sekarang
                 </a>
-                <button class="btn-ghost">
-                    Watch demo →
-                </button>
+                <a href="#anggota" class="btn-ghost">
+                    Anggota Kami →
+                </a>
             </div>
 
             <p class="text-center text-gray-500 text-sm mb-20 fade-up fade-up-delay-3">
@@ -320,36 +322,21 @@
     </section>
 
     <!-- Features Section -->
-    <section class="py-20 px-6 md:px-12 bg-gradient-to-b from-transparent via-blue-500/5 to-transparent">
+    <section id="anggota" class="py-20 px-6 md:px-12 bg-gradient-to-b from-transparent via-blue-500/5 to-transparent">
         <div class="max-w-7xl mx-auto">
             <h2 class="text-4xl font-bold text-white text-center mb-16">
                 Anggota Kelompok
             </h2>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="feature-card fade-up fade-up-delay-1">
-                    <div class="feature-icon">✨</div>
-                    <div class="feature-title">Yusuf Herlian Ananta Ril</div>
-                    <div class="feature-desc">
-                        2317051083
+                <?php foreach ($anggota as $i => $p): ?>
+                    <div class="feature-card fade-up fade-up-delay-<?= $i + 1 ?>">
+                        <div class="feature-icon"><?= $p["icon"] ?></div>
+                        <div class="feature-title"><?= $p["name"] ?></div>
+                        <div class="feature-desc"><?= $p["npm"] ?></div>
                     </div>
-                </div>
+                <?php endforeach; ?>
 
-                <div class="feature-card fade-up fade-up-delay-2">
-                    <div class="feature-icon">⚡</div>
-                    <div class="feature-title">Lutfi Harya Ferdian</div>
-                    <div class="feature-desc">
-                        23170510
-                    </div>
-                </div>
-
-                <div class="feature-card fade-up fade-up-delay-3">
-                    <div class="feature-icon">🔒</div>
-                    <div class="feature-title">Indriazan Alkautsar</div>
-                    <div class="feature-desc">
-                        23170510
-                    </div>
-                </div>
             </div>
         </div>
     </section>
