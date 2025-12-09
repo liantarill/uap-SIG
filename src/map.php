@@ -38,7 +38,7 @@
             <span class="logo-text">GIS UAP</span>
         </div>
         <div class="nav-actions">
-            <a href="./index.php" class="btn-ghost">
+            <a href="../index.php" class="btn-ghost">
                 <i class="fas fa-home mr-1"></i> Home
             </a>
             <button class="btn-glow" onclick="openAddModal()">
