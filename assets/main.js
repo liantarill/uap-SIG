@@ -24,9 +24,11 @@ function getMarkerColor(type) {
     rumah_sakit: "#3b82f6",
     kantor: "#10b981",
     tempat_ibadah: "#f59e0b",
+    pantai: "#06b6d4",
     lainnya: "#8b5cf6",
   };
-  return colors[type] || "#8b5cf6";
+
+  return colors[type] || colors["lainnya"];
 }
 
 function createMarker(lat, lng, data) {
@@ -43,24 +45,34 @@ function createMarker(lat, lng, data) {
     icon: icon,
   }).addTo(map);
 
+  let descriptionHTML = "";
+  if (data.description) {
+    try {
+      const descObj = JSON.parse(data.description); // parse JSON
+      descriptionHTML =
+        "<p style='margin:5px 0;'><strong>Keterangan:</strong><br>";
+      for (const key in descObj) {
+        descriptionHTML += `${key}: ${descObj[key]}<br>`;
+      }
+      descriptionHTML += "</p>";
+    } catch (e) {
+      // Kalau bukan JSON, tampilkan apa adanya
+      descriptionHTML = `<p style="margin:5px 0;"><strong>Keterangan:</strong> ${data.description}</p>`;
+    }
+  }
+
   const popupContent = `
-                <div style="font-family: 'Poppins', sans-serif;">
-                    <h3 style="margin: 0 0 10px 0; color: ${color}; font-weight: 600;">${
+    <div style="font-family: 'Poppins', sans-serif;">
+        <h3 style="margin:0 0 10px 0; color:${color}; font-weight:600;">${
     data.name
   }</h3>
-                    <p style="margin: 5px 0;"><strong>Jenis:</strong> ${
-                      data.type
-                    }</p>
-                    <p style="margin: 5px 0;"><strong>Koordinat:</strong> ${lat.toFixed(
-                      6
-                    )}, ${lng.toFixed(6)}</p>
-                    ${
-                      data.description
-                        ? `<p style="margin: 5px 0;"><strong>Keterangan:</strong> ${data.description}</p>`
-                        : ""
-                    }
-                </div>
-            `;
+        <p style="margin:5px 0;"><strong>Jenis:</strong> ${data.type}</p>
+        <p style="margin:5px 0;"><strong>Koordinat:</strong> ${lat.toFixed(
+          6
+        )}, ${lng.toFixed(6)}</p>
+        ${descriptionHTML}
+    </div>
+`;
 
   marker.bindPopup(popupContent);
   return marker;
@@ -364,29 +376,48 @@ function updateMarkerList() {
     const li = document.createElement("li");
     li.className =
       "bg-slate-800 p-3 rounded-lg border-l-4 border-cyan-400 cursor-pointer transition-all hover:bg-slate-700 hover:translate-x-1 hover:shadow-lg hover:shadow-cyan-400/20 border border-slate-600";
+    let descriptionText = "";
+    if (marker.description) {
+      try {
+        const descObj = JSON.parse(marker.description); // parse JSON
+        for (const key in descObj) {
+          descriptionText += `${key}: ${descObj[key]} | `;
+        }
+        // hapus trailing " | "
+        descriptionText = descriptionText.slice(0, -3);
+      } catch (e) {
+        // kalau bukan JSON, tampilkan apa adanya
+        descriptionText = marker.description;
+      }
+    }
+
     li.innerHTML = `
-                    <h4 class="text-sm font-semibold mb-1 text-cyan-400"><i class="fas fa-map-pin mr-1"></i>${
-                      marker.name
-                    }</h4>
-                    <p class="text-xs text-gray-400 mb-0.5"><i class="fas fa-layer-group mr-1"></i><strong>Jenis:</strong> ${
-                      marker.type
-                    }</p>
-                    <p class="text-xs text-gray-400 mb-0.5"><i class="fas fa-crosshairs mr-1"></i><strong>Koordinat:</strong> ${parseFloat(
-                      marker.latitude
-                    ).toFixed(6)}, ${parseFloat(marker.longitude).toFixed(
-      6
-    )}</p>
-                    ${
-                      marker.description
-                        ? `<p class="text-xs text-gray-400 mb-0.5"><i class="fas fa-info-circle mr-1"></i><strong>Ket:</strong> ${marker.description}</p>`
-                        : ""
-                    }
-                    <div class="mt-2">
-                        <button class="px-2.5 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600 transition-colors" onclick="deleteMarker(${
-                          marker.id
-                        })"><i class="fas fa-trash mr-1"></i>Hapus</button>
-                    </div>
-                `;
+        <h4 class="text-sm font-semibold mb-1 text-cyan-400">
+            <i class="fas fa-map-pin mr-1"></i>${marker.name}
+        </h4>
+        <p class="text-xs text-gray-400 mb-0.5">
+            <i class="fas fa-layer-group mr-1"></i><strong>Jenis:</strong> ${
+              marker.type
+            }
+        </p>
+        <p class="text-xs text-gray-400 mb-0.5">
+            <i class="fas fa-crosshairs mr-1"></i><strong>Koordinat:</strong> ${parseFloat(
+              marker.latitude
+            ).toFixed(6)}, ${parseFloat(marker.longitude).toFixed(6)}
+        </p>
+        ${
+          descriptionText
+            ? `<p class="text-xs text-gray-400 mb-0.5"><i class="fas fa-info-circle mr-1"></i><strong>Ket:</strong> ${descriptionText}</p>`
+            : ""
+        }
+        <div class="mt-2">
+            <button class="px-2.5 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600 transition-colors" onclick="deleteMarker(${
+              marker.id
+            })">
+                <i class="fas fa-trash mr-1"></i>Hapus
+            </button>
+        </div>
+    `;
 
     li.onclick = function (e) {
       if (e.target.tagName !== "BUTTON") {

@@ -1,11 +1,12 @@
 <?php
 $anggota = [
-    ["name" => "Yusuf Herlian Ananta Ril", "npm" => "2317051083", "icon" => "✨"],
-    ["name" => "Nama Orang 2", "npm" => "2317051000", "icon" => "🔥"],
-    ["name" => "Nama Orang 3", "npm" => "2317051xxx", "icon" => "⭐"],
-    ["name" => "Nama Orang 3", "npm" => "2317051xxx", "icon" => "⭐"],
-    ["name" => "Nama Orang 3", "npm" => "2317051xxx", "icon" => "⭐"],
-    ["name" => "Nama Orang 3", "npm" => "2317051xxx", "icon" => "⭐"],
+    ["name" => "Yusuf Herlian Ananta Ril", "npm" => "2317051083", "image" => "lian.jpg"],
+    ["name" => "Lutfi Harya Ferdian", "npm" => "2317051096", "image" => "🔥"],
+    ["name" => "Muhammad Randi Putra Kurniawan", "npm" => "2317051009", "image" => "randi.png"],
+    ["name" => "Indriazan Alkautsar", "npm" => "2317051074", "image" => "⭐"],
+    ["name" => "Muhammad Ilham Bintang Faiz Efendi", "npm" => "2357051023", "image" => "⭐"],
+    ["name" => "Faras Raditia Maulana", "npm" => "2357051020", "image" => "⭐"],
+    ["name" => "Muhammad Zidan Rosyid", "npm" => "2317051044", "image" => "⭐"],
 ];
 ?>
 
@@ -286,21 +287,18 @@ $anggota = [
 
                 <h1 class="text-2xl font-bold mb-1 text-white"><i class="fas fa-map-marked-alt mr-2"></i>UAP Sistem Informasi Geografis</h1>
             </div>
-            <button class="btn-ghost text-sm">Download</button>
         </div>
     </nav>
 
     <!-- Hero Section -->
-    <section class="min-h-screen flex flex-col items-center justify-center px-6 pt-20">
+    <section class="min-h-screen flex flex-col items-center justify-center px-6 pt-60">
         <div class="max-w-6xl w-full">
             <!-- Hero Text -->
             <div class="text-center mb-16 fade-up fade-up-delay-1">
                 <h1 class="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
                     Ujian Akhir Praktikum <br class="hidden md:block" /> <span class="text-gradient">Sistem Informasi Geografi</span>
                 </h1>
-                <p class="text-xl text-gray-400 max-w-2xl mx-auto mb-8">
-                    Create, manage, and conquer your to-do lists with ease. Stay organized, stay productive.
-                </p>
+
             </div>
 
             <!-- CTA Buttons -->
@@ -313,9 +311,7 @@ $anggota = [
                 </a>
             </div>
 
-            <p class="text-center text-gray-500 text-sm mb-20 fade-up fade-up-delay-3">
-                Trusted by over <span class="font-semibold text-white">50,000</span> designers and developers
-            </p>
+
 
 
         </div>
@@ -330,12 +326,17 @@ $anggota = [
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <?php foreach ($anggota as $i => $p): ?>
-                    <div class="feature-card fade-up fade-up-delay-<?= $i + 1 ?>">
-                        <div class="feature-icon"><?= $p["icon"] ?></div>
-                        <div class="feature-title"><?= $p["name"] ?></div>
-                        <div class="feature-desc"><?= $p["npm"] ?></div>
+                    <div class="feature-card fade-up fade-up-delay-<?= $i + 1 ?> flex flex-col items-center text-center">
+                        <div class="feature-icon w-28 h-28 rounded-full overflow-hidden flex items-center justify-center">
+                            <img src="assets/images/<?= $p['image'] ?>" alt="<?= $p['name'] ?>" class="w-full h-full object-cover">
+                        </div>
+
+                        <div class="feature-title mt-2"><?= $p["name"] ?></div>
+                        <div class="feature-desc text-gray-500"><?= $p["npm"] ?></div>
                     </div>
+
                 <?php endforeach; ?>
+
 
             </div>
         </div>

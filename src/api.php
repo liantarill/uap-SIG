@@ -88,21 +88,24 @@ function addMarker($conn)
     try {
         $data = json_decode(file_get_contents('php://input'), true);
 
-        $stmt = $conn->prepare("INSERT INTO markers (name, type, latitude, longitude, description, created_at) VALUES (?, ?, ?, ?, ?, NOW())");
+        $stmt = $conn->prepare("
+            INSERT INTO markers (nama_pantai, jam_buka, jam_tutup, harga, rating, latitude, longitude)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        ");
+
         $stmt->execute([
-            $data['name'],
-            $data['type'],
+            $data['NamaPantai'] ?? null,
+            $data['JamBuka'] ?? null,
+            $data['JamTutup'] ?? null,
+            $data['Harga'] ?? null,
+            $data['Rating'] ?? null,
             $data['latitude'],
             $data['longitude'],
-            $data['description'] ?? ''
         ]);
-
-        $id = $conn->lastInsertId();
 
         echo json_encode([
             'success' => true,
-            'message' => 'Marker added successfully',
-            'id' => $id
+            'message' => 'Marker added successfully'
         ]);
     } catch (PDOException $e) {
         echo json_encode([
@@ -111,6 +114,7 @@ function addMarker($conn)
         ]);
     }
 }
+
 
 // Delete marker
 function deleteMarker($conn)
@@ -133,73 +137,13 @@ function deleteMarker($conn)
     }
 }
 
+
 // Map REMARK value to our type system
 function mapRemarkToType($remark)
 {
-    if (empty($remark)) {
-        return 'lainnya';
-    }
-
-    $remark = strtolower(trim($remark));
-
-    // Mapping dictionary
-    $typeMap = [
-        // Sekolah
-        'sekolah' => 'sekolah',
-        'sd' => 'sekolah',
-        'smp' => 'sekolah',
-        'sma' => 'sekolah',
-        'smk' => 'sekolah',
-        'tk' => 'sekolah',
-        'paud' => 'sekolah',
-        'universitas' => 'sekolah',
-        'kampus' => 'sekolah',
-        'perguruan tinggi' => 'sekolah',
-        'madrasah' => 'sekolah',
-        'pesantren' => 'sekolah',
-
-        // Rumah Sakit
-        'rumah sakit' => 'rumah_sakit',
-        'rs' => 'rumah_sakit',
-        'puskesmas' => 'rumah_sakit',
-        'klinik' => 'rumah_sakit',
-        'poliklinik' => 'rumah_sakit',
-        'apotek' => 'rumah_sakit',
-        'posyandu' => 'rumah_sakit',
-
-        // Kantor Pemerintahan
-        'kantor' => 'kantor',
-        'pemerintah' => 'kantor',
-        'balai desa' => 'kantor',
-        'kelurahan' => 'kantor',
-        'kecamatan' => 'kantor',
-        'dinas' => 'kantor',
-        'instansi' => 'kantor',
-        'balai' => 'kantor',
-        'bpbd' => 'kantor',
-
-        // Tempat Ibadah
-        'masjid' => 'tempat_ibadah',
-        'musholla' => 'tempat_ibadah',
-        'mushola' => 'tempat_ibadah',
-        'surau' => 'tempat_ibadah',
-        'langgar' => 'tempat_ibadah',
-        'gereja' => 'tempat_ibadah',
-        'pura' => 'tempat_ibadah',
-        'vihara' => 'tempat_ibadah',
-        'klenteng' => 'tempat_ibadah',
-    ];
-
-    // Check if remark contains any keyword
-    foreach ($typeMap as $keyword => $type) {
-        if (strpos($remark, $keyword) !== false) {
-            return $type;
-        }
-    }
-
-    // Default to 'lainnya'
-    return 'lainnya';
+    return 'pantai';
 }
+
 
 // Get GeoJSON
 function getGeoJSON($conn)
@@ -325,78 +269,64 @@ function saveGeoJSON($conn)
             throw new Exception('Invalid GeoJSON format');
         }
 
-
-        // Prepare insert statements
         $markerStmt = $conn->prepare("
             INSERT INTO markers (name, type, latitude, longitude, description)
             VALUES (?, ?, ?, ?, ?)
         ");
 
-        $regionStmt = $conn->prepare("
-            INSERT INTO regions (name, type, geometry_type, geometry_data, properties, description)
-            VALUES (?, ?, ?, ?, ?, ?)
-        ");
-
         $markersInserted = 0;
-        $regionsInserted = 0;
 
         foreach ($geojson['features'] as $feature) {
+
             $geometry = $feature['geometry'];
             $props    = $feature['properties'] ?? [];
 
-            $name = $props['NAMOBJ'] ??
-                $props['name'] ??
-                $props['nama'] ??
-                'Unnamed';
+            if ($geometry['type'] !== 'Point') {
+                continue; // Abaikan polygon/line jika GeoJSON hanya berisi point
+            }
 
-            $type = $props['REMARK'] ??
-                $props['jenis'] ??
-                'lainnya';
+            // ==========================
+            //  SESUAIKAN DENGAN GEOJSON KAMU
+            // ==========================
+            $name = $props['NamaPantai'] ?? "Pantai";
+            $type = "pantai";
 
-            $description = $props['keterangan'] ??
-                $props['description'] ??
-                '';
+            // Siapkan array untuk deskripsi
+            $descArray = [];
 
-            // Insert POINT
-            if ($geometry['type'] === 'Point') {
+            // Ambil JamBuka, JamTutup, Harga, Rating jika ada
+            if (isset($props["JamBuka"])) $descArray["JamBuka"] = $props["JamBuka"];
+            if (isset($props["JamTutup"])) $descArray["JamTutup"] = $props["JamTutup"];
+            if (isset($props["Harga"])) $descArray["Harga"] = $props["Harga"];
+            if (isset($props["Rating"])) $descArray["Rating"] = $props["Rating"];
 
-                $coords = $geometry['coordinates'];
-                $lon = $coords[0];
-                $lat = $coords[1];
+            // Jika ada keterangan nested, gabungkan
+            if (isset($props['keterangan']) && is_array($props['keterangan'])) {
+                $descArray = array_merge($descArray, $props['keterangan']);
+            }
 
-                // Cek duplikat
-                $check = $conn->prepare("
-                    SELECT id FROM markers 
-                    WHERE ABS(latitude - ?) < 0.00001 
-                      AND ABS(longitude - ?) < 0.00001
-                ");
-                $check->execute([$lat, $lon]);
+            // Jika ada properti description string, simpan juga
+            if (isset($props['description'])) {
+                $descArray['description'] = $props['description'];
+            }
 
-                if (!$check->fetch()) {
-                    $markerStmt->execute([$name, mapRemarkToType($type), $lat, $lon, $description]);
-                    $markersInserted++;
-                }
-            } else {
-                // Insert POLYGON / LINESTRING ke regions table
+            // Simpan semua sebagai JSON string
+            $description = json_encode($descArray, JSON_UNESCAPED_UNICODE);
 
-                $geometry_json = json_encode($geometry);
-                $properties_json = json_encode($props);
+            // Ambil koordinat
+            $coords = $geometry['coordinates'];
+            $lon = $coords[0];
+            $lat = $coords[1];
 
-                // Cek duplikat
-                $check = $conn->prepare("SELECT id FROM regions WHERE geometry_data = ?");
-                $check->execute([$geometry_json]);
+            // Cek duplikat
+            $check = $conn->prepare("
+    SELECT id FROM markers 
+    WHERE ABS(latitude - ?) < 0.00001 AND ABS(longitude - ?) < 0.00001
+");
+            $check->execute([$lat, $lon]);
 
-                if (!$check->fetch()) {
-                    $regionStmt->execute([
-                        $name,
-                        $type,
-                        $geometry['type'],
-                        $geometry_json,
-                        $properties_json,
-                        $description
-                    ]);
-                    $regionsInserted++;
-                }
+            if (!$check->fetch()) {
+                $markerStmt->execute([$name, $type, $lat, $lon, $description]);
             }
         }
 
@@ -404,7 +334,7 @@ function saveGeoJSON($conn)
             'success' => true,
             'message' => 'GeoJSON berhasil disimpan ke database',
             'markers_inserted' => $markersInserted,
-            'regions_inserted' => $regionsInserted
+            'regions_inserted' => 0
         ]);
     } catch (Exception $e) {
         echo json_encode([
@@ -413,6 +343,7 @@ function saveGeoJSON($conn)
         ]);
     }
 }
+
 
 
 $conn = null;

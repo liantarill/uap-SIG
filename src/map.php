@@ -1,10 +1,9 @@
-<!DOCTYPE html>
 <html lang="id">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebGIS - Tugas 2</title>
+    <title>WebGIS - Geographic Information System</title>
 
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
@@ -15,97 +14,121 @@
     <!-- Google Fonts - Poppins -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-
+    <link rel="stylesheet" href="/assets/style.css">
     <style>
         body {
-            font-family: 'Poppins', sans-serif;
-        }
 
-        #map {
-            width: 100%;
-            height: 100%;
+            overflow: hidden;
         }
     </style>
 </head>
 
-<body class="bg-slate-900 text-gray-100">
-    <!-- Header -->
-    <div class="bg-gradient-to-r from-slate-800 to-slate-900 text-white px-6 py-5 shadow-xl border-b-2 border-cyan-400">
-        <a href="/index.php">
-            <h1 class="text-2xl font-bold mb-1 text-white"><i class="fas fa-map-marked-alt mr-2"></i>UAP Sistem Informasi Geografis</h1>
-        </a>
-    </div>
+<body>
+    <!-- Star field background like index.php -->
+    <div class="star-field" id="starField"></div>
 
-    <!-- Container -->
-    <div class="flex h-[calc(100vh-80px)]">
-        <!-- Sidebar -->
-        <div class="w-[350px] bg-slate-800 shadow-2xl overflow-y-auto p-5 border-r border-slate-700">
-            <!-- Legend -->
-            <div class="bg-slate-700 rounded-lg p-4 shadow-lg border border-slate-600 mb-5">
-                <h3 class="text-base font-semibold mb-4 text-cyan-400 border-b-2 border-cyan-400 pb-2"><i class="fas fa-palette mr-2"></i>Legenda</h3>
-                <div class="space-y-2">
-                    <div class="flex items-center text-sm text-gray-400">
-                        <div class="w-5 h-5 rounded-full mr-2.5 border-2 border-slate-600 shadow flex items-center justify-center" style="background: #ef4444;">
-                            <i class="fas fa-school text-white text-[10px]"></i>
-                        </div>
-                        <span>Sekolah</span>
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <div class="logo">
+            <i class="fas fa-map-marked-alt text-cyan-400 text-xl"></i>
+            <span class="logo-text">GIS UAP</span>
+        </div>
+        <div class="nav-actions">
+            <a href="./index.php" class="btn-ghost">
+                <i class="fas fa-home mr-1"></i> Home
+            </a>
+            <button class="btn-glow" onclick="openAddModal()">
+                <i class="fas fa-plus mr-1"></i> Add Marker
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Left Panel -->
+        <aside class="side-panel left">
+            <!-- Stats -->
+            <div class="stat-card">
+                <div class="stat-value"><span id="totalLocations">0</span></div>
+                <div class="stat-label">Total Locations</div>
+                <i class="fas fa-map-marker-alt stat-icon"></i>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-value"><span id="totalRegions">0</span></div>
+                <div class="stat-label">Regions Mapped</div>
+                <i class="fas fa-draw-polygon stat-icon"></i>
+            </div>
+
+            <!-- Legend Panel -->
+            <div class="panel-card">
+                <div class="panel-header">
+                    <i class="fas fa-palette"></i> Legend
+                </div>
+                <div>
+                    <div class="legend-item color-sekolah" style="border-left-color: #ef4444;">
+                        <div class="legend-dot" style="background: #ef4444;"></div>
+                        <span class="legend-text">Sekolah</span>
+                        <span class="legend-count">0</span>
                     </div>
-                    <div class="flex items-center text-sm text-gray-400">
-                        <div class="w-5 h-5 rounded-full mr-2.5 border-2 border-slate-600 shadow flex items-center justify-center" style="background: #3b82f6;">
-                            <i class="fas fa-hospital text-white text-[10px]"></i>
-                        </div>
-                        <span>Rumah Sakit</span>
+                    <div class="legend-item color-rumah_sakit" style="border-left-color: #3b82f6;">
+                        <div class="legend-dot" style="background: #3b82f6;"></div>
+                        <span class="legend-text">Rumah Sakit</span>
+                        <span class="legend-count">0</span>
                     </div>
-                    <div class="flex items-center text-sm text-gray-400">
-                        <div class="w-5 h-5 rounded-full mr-2.5 border-2 border-slate-600 shadow flex items-center justify-center" style="background: #10b981;">
-                            <i class="fas fa-building text-white text-[10px]"></i>
-                        </div>
-                        <span>Kantor Pemerintahan</span>
+                    <div class="legend-item color-kantor" style="border-left-color: #10b981;">
+                        <div class="legend-dot" style="background: #10b981;"></div>
+                        <span class="legend-text">Kantor Pemerintahan</span>
+                        <span class="legend-count">0</span>
                     </div>
-                    <div class="flex items-center text-sm text-gray-400">
-                        <div class="w-5 h-5 rounded-full mr-2.5 border-2 border-slate-600 shadow flex items-center justify-center" style="background: #f59e0b;">
-                            <i class="fas fa-mosque text-white text-[10px]"></i>
-                        </div>
-                        <span>Tempat Ibadah</span>
+                    <div class="legend-item color-tempat_ibadah" style="border-left-color: #f59e0b;">
+                        <div class="legend-dot" style="background: #f59e0b;"></div>
+                        <span class="legend-text">Tempat Ibadah</span>
+                        <span class="legend-count">0</span>
                     </div>
-                    <div class="flex items-center text-sm text-gray-400">
-                        <div class="w-5 h-5 rounded-full mr-2.5 border-2 border-slate-600 shadow flex items-center justify-center" style="background: #8b5cf6;">
-                            <i class="fas fa-map-pin text-white text-[10px]"></i>
-                        </div>
-                        <span>Lainnya</span>
+                    <div class="legend-item color-lainnya" style="border-left-color: #8b5cf6;">
+                        <div class="legend-dot" style="background: #8b5cf6;"></div>
+                        <span class="legend-text">Lainnya</span>
+                        <span class="legend-count">0</span>
                     </div>
                 </div>
             </div>
-            <!-- Upload GeoJSON -->
-            <div class="bg-slate-700 rounded-lg p-4 mb-5 shadow-lg border border-slate-600">
-                <h3 class="text-base font-semibold mb-4 text-cyan-400 border-b-2 border-cyan-400 pb-2"><i class="fas fa-folder-open mr-2"></i>Kelola GeoJSON</h3>
-                <div class="border-2 border-dashed border-cyan-400 rounded-lg p-5 text-center cursor-pointer transition-all hover:bg-cyan-400/10 hover:text-cyan-300 bg-cyan-400/5 text-gray-400 mb-3" onclick="document.getElementById('geojsonFile').click()">
-                    <p class="font-medium"><i class="fas fa-upload mr-2"></i>Klik untuk upload file GeoJSON</p>
-                    <small class="text-xs">File dari QGIS (Point, Polygon, LineString)</small>
-                    <input type="file" id="geojsonFile" accept=".geojson,.json" class="hidden">
+
+            <div class="panel-card">
+                <div class="panel-header">
+                    <i class="fas fa-bolt"></i> Quick Actions
                 </div>
-                <button class="w-full px-5 py-2.5 bg-cyan-400 text-slate-900 font-semibold rounded-lg hover:bg-cyan-500 transition-all hover:shadow-lg hover:shadow-cyan-400/30 mb-2" onclick="loadGeoJSON()">
-                    <i class="fas fa-check-circle mr-2"></i>Load GeoJSON
+                <button class="action-btn" onclick="openAddModal()">
+                    <i class="fas fa-plus-circle"></i> Add Marker
                 </button>
-
+                <button class="action-btn secondary" onclick="document.getElementById('geojsonFile').click()">
+                    <i class="fas fa-upload"></i> Upload GeoJSON
+                </button>
+                <input type="file" id="geojsonFile" accept=".geojson,.json" class="hidden" onchange="loadGeoJSON()">
             </div>
+        </aside>
 
-            <div class="bg-slate">
+        <!-- Map -->
+        <main>
+            <div id="map"></div>
+        </main>
 
-                <div class=" bg-slate-700 rounded-lg p-4 mb-5 shadow-lg border border-slate-600">
-                    <h3 class="text-base font-semibold mb-4 text-cyan-400 border-b-2 border-cyan-400 pb-2">
-                        <i class="fas fa-plus-circle mr-2"></i>Tambah Marker Baru
-                    </h3>
-                    <button class="w-full px-5 py-2.5 bg-cyan-400 text-slate-900 font-semibold rounded-lg hover:bg-cyan-500 transition-all hover:shadow-lg hover:shadow-cyan-400/30" onclick="openAddModal()">
-                        <i class="fas fa-map-marker-alt mr-2"></i>Tambah Titik Lokasi
-                    </button>
+        <!-- Right Panel -->
+        <aside class="side-panel right">
+            <!-- Search -->
+            <div class="panel-card">
+                <div class="panel-header">
+                    <i class="fas fa-search"></i> Search
+                </div>
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="searchInput" placeholder="Search locations..." class="search-input" onkeyup="searchMarkers()">
                 </div>
             </div>
-
             <!-- Search -->
             <div class="bg-slate-700 rounded-lg p-4 mb-5 shadow-lg border border-slate-600">
                 <h3 class="text-base font-semibold mb-4 text-cyan-400 border-b-2 border-cyan-400 pb-2"><i class="fas fa-search mr-2"></i>Pencarian</h3>
@@ -122,68 +145,99 @@
                 </ul>
             </div>
 
+            <!-- Location List -->
+            <div class="panel-card">
+                <div class="panel-header">
+                    <i class="fas fa-map-marker-alt"></i> Locations
+                </div>
+                <div id="markerList">
+                    <div class="empty-state">
+                        <i class="fas fa-inbox" style="font-size: 1.5rem; margin-bottom: 8px; display: block;"></i>
+                        No locations yet
+                    </div>
+                </div>
+
+            </div>
+
             <!-- Region List -->
-            <div class="bg-slate-700 rounded-lg p-4 mb-5 shadow-lg border border-slate-600">
-                <h3 class="text-base font-semibold mb-4 text-purple-400 border-b-2 border-purple-400 pb-2"><i class="fas fa-draw-polygon mr-2"></i>Daftar Wilayah (<span id="regionCount">0</span>)</h3>
+            <div class="panel-card">
+                <h3 class="panel-header">
+                    <i class="fas fa-draw-polygon mr-2"></i>Daftar Wilayah (<span id="regionCount">0</span>)
+                </h3>
+
                 <ul class="space-y-2.5" id="regionList">
                     <li class="text-center text-gray-500 py-5">
-                        Belum ada wilayah. Upload GeoJSON dengan Polygon/LineString.
+                        No regions mapped
                     </li>
                 </ul>
             </div>
 
 
-        </div>
-
-        <!-- Map Container -->
-        <div class="flex-1 relative">
-            <div id="map"></div>
-        </div>
+        </aside>
     </div>
 
     <!-- Modal Add Marker -->
-    <div id="addModal" class="hidden fixed inset-0 bg-black/70 z-[1000] items-center justify-center">
-        <div class="bg-slate-800 p-8 rounded-xl w-[90%] max-w-[500px] max-h-[90vh] overflow-y-auto border border-slate-700">
-            <div class="flex justify-between items-center mb-5">
-                <h2 class="text-xl font-semibold text-cyan-400"><i class="fas fa-plus-circle mr-2"></i>Tambah Marker Baru</h2>
-                <button class="text-2xl text-gray-400 hover:text-cyan-400 transition-colors" onclick="closeAddModal()"><i class="fas fa-times"></i></button>
+    <div id="addModal" class="hidden fixed inset-0 z-[1000] flex items-center justify-center modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Add New Marker</h2>
+                <button class="close-btn" onclick="closeAddModal()">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
             <form id="addMarkerForm" onsubmit="addMarker(event)">
-                <div class="mb-4">
-                    <label class="block mb-1.5 text-gray-400 text-sm"><i class="fas fa-tag mr-1"></i>Nama Lokasi *</label>
-                    <input type="text" name="name" required placeholder="Contoh: SDN 1 Bandar Lampung" class="w-full px-3 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20">
+                <div class="form-group">
+                    <label class="form-label"><i class="fas fa-tag mr-1"></i> Location Name</label>
+                    <input type="text" name="name" class="form-input" required placeholder="Enter location name">
                 </div>
-                <div class="mb-4">
-                    <label class="block mb-1.5 text-gray-400 text-sm"><i class="fas fa-layer-group mr-1"></i>Jenis/Tipe *</label>
-                    <select name="type" required class="w-full px-3 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-sm text-gray-100 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20">
-                        <option value="">-- Pilih Jenis --</option>
-                        <option value="sekolah"><i class="fas fa-school"></i> Sekolah</option>
-                        <option value="rumah_sakit"><i class="fas fa-hospital"></i> Rumah Sakit</option>
-                        <option value="kantor"><i class="fas fa-building"></i> Kantor Pemerintahan</option>
-                        <option value="tempat_ibadah"><i class="fas fa-mosque"></i> Tempat Ibadah</option>
-                        <option value="lainnya"><i class="fas fa-map-pin"></i> Lainnya</option>
+                <div class="form-group">
+                    <label class="form-label"><i class="fas fa-layer-group mr-1"></i> Category</label>
+                    <select name="type" class="form-select" required>
+                        <option value="">-- Select Category --</option>
+                        <option value="sekolah">Sekolah</option>
+                        <option value="rumah_sakit">Rumah Sakit</option>
+                        <option value="kantor">Kantor Pemerintahan</option>
+                        <option value="tempat_ibadah">Tempat Ibadah</option>
+                        <option value="lainnya">Lainnya</option>
                     </select>
                 </div>
-                <div class="mb-4">
-                    <label class="block mb-1.5 text-gray-400 text-sm"><i class="fas fa-map-marker mr-1"></i>Latitude *</label>
-                    <input type="number" step="any" name="latitude" required placeholder="-5.450000" class="w-full px-3 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20">
+                <div class="form-group">
+                    <label class="form-label"><i class="fas fa-map-marker mr-1"></i> Latitude</label>
+                    <input type="number" step="any" name="latitude" class="form-input" required placeholder="-5.450000">
                 </div>
-                <div class="mb-4">
-                    <label class="block mb-1.5 text-gray-400 text-sm"><i class="fas fa-map-marker mr-1"></i>Longitude *</label>
-                    <input type="number" step="any" name="longitude" required placeholder="105.266670" class="w-full px-3 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20">
+                <div class="form-group">
+                    <label class="form-label"><i class="fas fa-map-marker mr-1"></i> Longitude</label>
+                    <input type="number" step="any" name="longitude" class="form-input" required placeholder="105.266670">
                 </div>
-                <div class="mb-4">
-                    <label class="block mb-1.5 text-gray-400 text-sm"><i class="fas fa-align-left mr-1"></i>Keterangan</label>
-                    <textarea name="description" placeholder="Deskripsi tambahan tentang lokasi ini..." class="w-full px-3 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 resize-y min-h-[60px]"></textarea>
+                <div class="form-group">
+                    <label class="form-label"><i class="fas fa-align-left mr-1"></i> Description</label>
+                    <textarea name="description" class="form-textarea" placeholder="Additional information..."></textarea>
                 </div>
-                <button type="submit" class="w-full px-5 py-2.5 bg-cyan-400 text-slate-900 font-semibold rounded-lg hover:bg-cyan-500 transition-all hover:shadow-lg hover:shadow-cyan-400/30">
-                    <i class="fas fa-save mr-2"></i>Simpan Marker
+                <button type="submit" class="action-btn">
+                    <i class="fas fa-save"></i> Save Marker
                 </button>
             </form>
         </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+    <!-- <script>
+        // Generate random stars like index.php
+        function generateStars() {
+            const starField = document.getElementById('starField');
+            const starCount = Math.min(60, window.innerWidth / 10);
+
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 4 + 's';
+                starField.appendChild(star);
+            }
+        }
+        generateStars();
+    </script> -->
     <script src="/assets/main.js"></script>
 </body>
 
