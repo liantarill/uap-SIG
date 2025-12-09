@@ -1,12 +1,12 @@
 <?php
 $anggota = [
     ["name" => "Yusuf Herlian Ananta Ril", "npm" => "2317051083", "image" => "lian.jpg"],
-    ["name" => "Lutfi Harya Ferdian", "npm" => "2317051096", "image" => "🔥"],
+    ["name" => "Lutfi Harya Ferdian", "npm" => "2317051096", "image" => "lutpi.png"],
     ["name" => "Muhammad Randi Putra Kurniawan", "npm" => "2317051009", "image" => "randi.png"],
-    ["name" => "Indriazan Alkautsar", "npm" => "2317051074", "image" => "⭐"],
-    ["name" => "Muhammad Ilham Bintang Faiz Efendi", "npm" => "2357051023", "image" => "⭐"],
-    ["name" => "Faras Raditia Maulana", "npm" => "2357051020", "image" => "⭐"],
-    ["name" => "Muhammad Zidan Rosyid", "npm" => "2317051044", "image" => "⭐"],
+    ["name" => "Indriazan Alkautsar", "npm" => "2317051074", "image" => "alka.png"],
+    ["name" => "Muhammad Ilham Bintang Faiz Efendi", "npm" => "2357051023", "image" => "bintang.png"],
+    ["name" => "Faras Raditia Maulana", "npm" => "2357051020", "image" => "paras.png"],
+    ["name" => "Muhammad Zidan Rosyid", "npm" => "2317051044", "image" => "zidan.png"],
 ];
 ?>
 

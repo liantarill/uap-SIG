@@ -65,7 +65,7 @@
             </div>
 
             <!-- Legend Panel -->
-            <div class="panel-card">
+            <!-- <div class="panel-card">
                 <div class="panel-header">
                     <i class="fas fa-palette"></i> Legend
                 </div>
@@ -96,7 +96,7 @@
                         <span class="legend-count">0</span>
                     </div>
                 </div>
-            </div>
+            </div> -->
 
             <div class="panel-card">
                 <div class="panel-header">
