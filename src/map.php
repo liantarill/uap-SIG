@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebGIS - Geographic Information System</title>
+    <title>UAP SIG</title>
 
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
@@ -35,7 +35,7 @@
     <nav class="top-nav">
         <div class="logo">
             <i class="fas fa-map-marked-alt text-cyan-400 text-xl"></i>
-            <span class="logo-text">GIS UAP</span>
+            <span class="logo-text">UAP Sistem Informasi Geografis</span>
         </div>
         <div class="nav-actions">
             <a href="../index.php" class="btn-ghost">
